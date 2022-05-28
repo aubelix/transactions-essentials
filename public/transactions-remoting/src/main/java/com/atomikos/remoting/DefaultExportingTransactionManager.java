@@ -68,6 +68,11 @@ public class DefaultExportingTransactionManager implements ExportingTransactionM
 		if (!ct.getTid().equals(extent.getParentTransactionId())) {
 		    throw new IllegalArgumentException("The supplied extent is for a different transaction: found " + extent.getParentTransactionId()+ " but expected " + ct.getTid());
 		}
+		for (Participant p : extent.getParticipants()) {
+			String rootId = ct.getCompositeCoordinator().getRootId();
+			if (rootId != null && p.getURI().endsWith(rootId))
+				return;
+		}
 		ct.getExtent().add(extent);
 		Stack<Participant> participants = extent.getParticipants();
 		for (Participant p : participants) {

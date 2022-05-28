@@ -70,6 +70,9 @@ public class ParticipantAdapter implements Participant {
 
 	@Override
 	public int prepare() throws RollbackException, HeurHazardException, HeurMixedException, SysException {
+		if (cascadeList.isEmpty()) {
+			return Participant.READ_ONLY;
+		}
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.logDebug("Calling prepare on " + getURI());
 		}
