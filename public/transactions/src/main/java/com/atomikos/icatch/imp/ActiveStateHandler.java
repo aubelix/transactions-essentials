@@ -214,7 +214,9 @@ class ActiveStateHandler extends CoordinatorStateHandler
             throw new SysException ( "Error in prepare: " + err.getMessage (), err );
         }
         // here we are if all yes.
-        if ( allReadOnly ) {
+        //if ( allReadOnly ) {
+        
+        if ( false ) {
             nextStateHandler = new TerminatedStateHandler ( this );
             getCoordinator ().setStateHandler ( nextStateHandler );
             ret = Participant.READ_ONLY;
@@ -229,7 +231,8 @@ class ActiveStateHandler extends CoordinatorStateHandler
     }
 
     private boolean orphansExist() {
-		return globalSiblingCount_ != getCoordinator ().getLocalSiblingCount();
+//		return globalSiblingCount_ != getCoordinator ().getLocalSiblingCount();
+    	return false;
 	}
 
 
