@@ -17,6 +17,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,6 +47,7 @@ import com.atomikos.remoting.support.HeaderNames;
 
 @Path("/atomikos")
 @Consumes(HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON)
+@Produces("text/plain")
 public class AtomikosRestPort {
 	
 	public static final String REST_URL_PROPERTY_NAME = "com.atomikos.icatch.rest_port_url";
@@ -187,17 +189,24 @@ public class AtomikosRestPort {
 		    }
 		} else { //abandoned in OLTP? => delegate to log and recovery
 	
-                if (!onePhase) {
-                    try {
-                        delegateToRecovery(coordinatorId, true);
-                    } catch (LogException e) {
-                        LOGGER.logWarning("Error in commit for root " + rootId, e);
-                        throw409(e);
-                    }
-                } else {
-                    Response response = Response.status(Status.CONFLICT).entity(rootId).type(MediaType.TEXT_PLAIN).build();
-                    throw new WebApplicationException(response);
-                }
+			
+			// commit is called twice if call to commit is done transitive a -> b -> c and a -> c
+			// during commit the participant is removed from the TransactionService
+			// so for the second call we would get a 409
+			
+			
+			
+//                if (!onePhase) {
+//                    try {
+//                        delegateToRecovery(coordinatorId, true);
+//                    } catch (LogException e) {
+//                        LOGGER.logWarning("Error in commit for root " + rootId, e);
+//                        throw409(e);
+//                    }
+//                } else {
+//                    Response response = Response.status(Status.CONFLICT).entity(rootId).type(MediaType.TEXT_PLAIN).build();
+//                    throw new WebApplicationException(response);
+//                }
 
 		}
 		
