@@ -44,7 +44,7 @@ class TransactionContext {
 	 * @return True if terminated.
 	 */
 	synchronized boolean isTerminated() {
-		return state instanceof TerminatedStateHandler;
+		return state instanceof TerminatedStateHandler || state instanceof BranchEndedStateHandler;
 	}
 	
 	/**
