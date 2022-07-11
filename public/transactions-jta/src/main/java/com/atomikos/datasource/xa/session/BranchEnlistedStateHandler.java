@@ -104,4 +104,20 @@ class BranchEnlistedStateHandler extends TransactionContextStateHandler
 	{
 		return ct.isSameTransaction ( tx );
 	}
+	
+	
+	// Fix by Martin Aubele. Without this fix we need one new connection per call when not 2PC is used (no propagation header).
+    // this leads to a connection shortage of the service is called multiple times. 
+	
+	boolean isInactiveInTransaction ( CompositeTransaction tx ) 
+	{
+		if ("classic".equals(System.getProperty("atomikos.connection-reuse-strategy")))
+			return false;
+		// code is separated in special if statements to allow setting a breakpoint
+		if (ct.getCompositeCoordinator() != tx.getCompositeCoordinator())
+			return false;
+		
+		return true;
+	}
+
 }
