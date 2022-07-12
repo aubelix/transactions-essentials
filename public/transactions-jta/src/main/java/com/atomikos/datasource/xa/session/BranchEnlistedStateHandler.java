@@ -116,6 +116,9 @@ class BranchEnlistedStateHandler extends TransactionContextStateHandler
 		// code is separated in special if statements to allow setting a breakpoint
 		if (ct.getCompositeCoordinator() != tx.getCompositeCoordinator())
 			return false;
+		// handle a callback
+		if (ct.isRoot() != tx.isRoot())
+			return false;
 		
 		return true;
 	}
