@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.atomikos</groupId>
 	<artifactId>atomikos-parent</artifactId>
-	<version>5.0.10-SNAPSHOT</version>
+	<version>5.0.9.8</version>
 	<!-- With maven, a parent pom MUST have "pom" for packaging -->
 	<packaging>pom</packaging>
 	<name>Atomikos All POM</name>
@@ -315,18 +315,19 @@
 			<modules>
 				<module>public</module>
 			</modules>
-			<distributionManagement>
-				<snapshotRepository>
-					<id>sonatype-nexus-snapshots</id>
-					<name>Sonatype Nexus Snapshots</name>
-					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-				</snapshotRepository>
-				<repository>
-					<id>sonatype-nexus-staging</id>
-					<name>Nexus Release Repository</name>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-				</repository>
-			</distributionManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>http://maven-serv1.innovas.de:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>internal</id>
+      <url>http://maven-serv1.innovas.de:8081/nexus/content/repositories/releases/</url>
+    </repository>
+  </distributionManagement>
+
+
 		</profile>
 		<profile>
 			<id>release-sign-artifacts</id>
