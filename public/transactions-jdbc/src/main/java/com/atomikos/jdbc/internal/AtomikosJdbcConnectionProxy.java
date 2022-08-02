@@ -142,6 +142,9 @@ public class AtomikosJdbcConnectionProxy extends AbstractJdbcConnectionProxy {
 				forceCloseAllPendingStatements(true);
 			}
 
+			// FIX by Martin Aubele: also handle COMMITTING for normal transactions (no 2 Phase Commit) to make connection reusable
+			
+			//if (state == TxState.TERMINATED || state == TxState.COMMITTING || state.isHeuristic()) {
 			if (state == TxState.TERMINATED || state.isHeuristic()) {
 				// connection is reusable!
 				if (LOGGER.isTraceEnabled()) {
