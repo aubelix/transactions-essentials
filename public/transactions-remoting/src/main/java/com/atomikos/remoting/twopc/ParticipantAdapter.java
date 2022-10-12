@@ -8,8 +8,6 @@
 
 package com.atomikos.remoting.twopc;
 
-import static javax.ws.rs.client.ClientBuilder.newClient;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +19,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import com.atomikos.icatch.HeurCommitException;
 import com.atomikos.icatch.HeurHazardException;
@@ -42,20 +42,26 @@ public class ParticipantAdapter implements Participant {
 
 	private static final Logger LOGGER = LoggerFactory.createLogger(ParticipantAdapter.class);
 
-	private final WebTarget target;
-
+	private static Client client; 
+	
+	private final URI uri;
+	
 	private final Map<String, Integer> cascadeList = new HashMap<>();
 
 	public ParticipantAdapter(URI uri) {
-		Client client = newClient();
-		client.property("jersey.config.client.suppressHttpComplianceValidation", true);
-		client.register(ParticipantsProvider.class);
-		target = client.target(uri);
+		if (client == null) {
+			ResteasyClientBuilder builder = new ResteasyClientBuilder();
+			Client c = builder.connectionPoolSize(10).build(); 
+			c.property("jersey.config.client.suppressHttpComplianceValidation", true);
+			c.register(ParticipantsProvider.class);
+			client = c;
+		}
+		this.uri = uri;
 	}
 
 	@Override
 	public String getURI() {
-		return target.getUri().toASCIIString();
+		return uri.toASCIIString();
 	}
 
 	@Override
@@ -77,7 +83,8 @@ public class ParticipantAdapter implements Participant {
 			LOGGER.logDebug("Calling prepare on " + getURI());
 		}
 		try {
-			int result = target.request()
+			
+			int result = client.target(uri).request()
 					.buildPost(Entity.entity(cascadeList, HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON))
 					.invoke(Integer.class);
 			if (LOGGER.isTraceEnabled()) {
@@ -93,7 +100,7 @@ public class ParticipantAdapter implements Participant {
 				LOGGER.logWarning("Unexpected error during prepare - see stacktrace for more details...", e);
 				throw new HeurHazardException();
 			}
-		}
+		} 
 	}
 
 	@Override
@@ -103,24 +110,30 @@ public class ParticipantAdapter implements Participant {
 			LOGGER.logDebug("Calling commit on " + getURI());
 		}
 
-		Response r = target.path(String.valueOf(onePhase)).request().buildPut(Entity.entity("", HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON)).invoke();
-
-		if (r.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
-			int status = r.getStatus();
-			switch (status) {
-			case 404:
-				if (onePhase) {
-					LOGGER.logWarning("Remote participant not available - default outcome will be rollback");
-					throw new RollbackException();
+		Response r = null;
+		try {
+			r = client.target(uri).path(String.valueOf(onePhase)).request().buildPut(Entity.entity("", HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON)).invoke();
+			if (r.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
+				int status = r.getStatus();
+				switch (status) {
+				case 404:
+					if (onePhase) {
+						LOGGER.logWarning("Remote participant not available - default outcome will be rollback");
+						throw new RollbackException();
+					}
+				case 409:
+					LOGGER.logWarning("Unexpected 409 error on commit");
+					throw new HeurMixedException();
+				default:
+					LOGGER.logWarning("Unexpected error on commit: " + status);
+					throw new HeurHazardException();
 				}
-			case 409:
-				LOGGER.logWarning("Unexpected 409 error on commit");
-				throw new HeurMixedException();
-			default:
-				LOGGER.logWarning("Unexpected error on commit: " + status);
-				throw new HeurHazardException();
 			}
+		} finally {
+			if (r != null)
+				r.close();
 		}
+
 
 	}
 
@@ -129,22 +142,26 @@ public class ParticipantAdapter implements Participant {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.logDebug("Calling rollback on " + getURI());
 		}
-
-		Response r = target.request().header(HttpHeaders.CONTENT_TYPE, HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON).delete();
-
-		if (r.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
-			int status = r.getStatus();
-			switch (status) {
-			case 409:
-				LOGGER.logWarning("Unexpected 409 error on rollback");
-				throw new HeurMixedException();
-			case 404:
-				LOGGER.logDebug("Unexpected 404 error on rollback - ignoring...");
-				break;
-			default:
-				LOGGER.logWarning("Unexpected error on rollback: " + status);
-				throw new HeurHazardException();
+		Response r = null;
+		try {
+			r = client.target(uri).request().header(HttpHeaders.CONTENT_TYPE, HeaderNames.MimeType.APPLICATION_VND_ATOMIKOS_JSON).delete();
+			if (r.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
+				int status = r.getStatus();
+				switch (status) {
+				case 409:
+					LOGGER.logWarning("Unexpected 409 error on rollback");
+					throw new HeurMixedException();
+				case 404:
+					LOGGER.logDebug("Unexpected 404 error on rollback - ignoring...");
+					break;
+				default:
+					LOGGER.logWarning("Unexpected error on rollback: " + status);
+					throw new HeurHazardException();
+				}
 			}
+		} finally {
+			if (r != null)
+				r.close();
 		}
 
 	}
