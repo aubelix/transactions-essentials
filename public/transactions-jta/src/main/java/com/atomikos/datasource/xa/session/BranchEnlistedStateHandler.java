@@ -118,7 +118,8 @@ class BranchEnlistedStateHandler extends TransactionContextStateHandler
 			return false;
 		if (ct.isRoot() != tx.isRoot())
 			return false;
-		
+		if (branch.isActive())
+			return false;
 		return true;
 	}
 

@@ -3,19 +3,19 @@
 	<parent>
 		<groupId>com.atomikos</groupId>
 		<artifactId>ate</artifactId>
-		<version>5.0.9.9</version>
+		<version>5.0.9.10</version>
 	</parent>
 	<artifactId>transactions-remoting</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jta</artifactId>
-			<version>5.0.9.9</version>
+			<version>5.0.9.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions</artifactId>
-			<version>5.0.9.9</version>
+			<version>5.0.9.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
