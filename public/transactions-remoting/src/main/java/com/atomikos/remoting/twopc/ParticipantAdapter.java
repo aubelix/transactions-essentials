@@ -51,7 +51,7 @@ public class ParticipantAdapter implements Participant {
 	public ParticipantAdapter(URI uri) {
 		if (client == null) {
 			ResteasyClientBuilder builder = new ResteasyClientBuilder();
-			Client c = builder.connectionPoolSize(10).build(); 
+			Client c = builder.connectionPoolSize(20).build(); 
 			c.property("jersey.config.client.suppressHttpComplianceValidation", true);
 			c.register(ParticipantsProvider.class);
 			client = c;
