@@ -93,10 +93,20 @@ public class ParticipantAdapter implements Participant {
 			return result;
 		} catch (WebApplicationException e) {
 			int status = e.getResponse().getStatus();
+			
+			// 404 and 409 wrote a String to the entity that we have to consume
+			// see https://stackoverflow.com/questions/27063667/httpclient-4-3-blocking-on-connection-pool
+
 			if (status == 404) {
+				consumeStringEntity(e.getResponse());
+				e.getResponse().close();
 				LOGGER.logWarning("Remote participant not available - any remote work will rollback...", e);
 				throw new RollbackException();
 			} else {
+				if (status == 409) {
+					consumeStringEntity(e.getResponse());
+					e.getResponse().close();
+				}
 				LOGGER.logWarning("Unexpected error during prepare - see stacktrace for more details...", e);
 				throw new HeurHazardException();
 			}
@@ -117,11 +127,13 @@ public class ParticipantAdapter implements Participant {
 				int status = r.getStatus();
 				switch (status) {
 				case 404:
+					consumeStringEntity(r);
 					if (onePhase) {
 						LOGGER.logWarning("Remote participant not available - default outcome will be rollback");
 						throw new RollbackException();
 					}
 				case 409:
+					consumeStringEntity(r);
 					LOGGER.logWarning("Unexpected 409 error on commit");
 					throw new HeurMixedException();
 				default:
@@ -149,6 +161,8 @@ public class ParticipantAdapter implements Participant {
 				int status = r.getStatus();
 				switch (status) {
 				case 409:
+					// 409 writes a String entity - we have to consume it
+					consumeStringEntity(r);
 					LOGGER.logWarning("Unexpected 409 error on rollback");
 					throw new HeurMixedException();
 				case 404:
@@ -195,4 +209,14 @@ public class ParticipantAdapter implements Participant {
 		return "ParticipantAdapter for: " + getURI();
 	}
 
+	private void consumeStringEntity(Response r) {
+		// AtomikosRestPort.commit() does Response.status(Status.CONFLICT).entity(rootId).build();    
+		// the entity body has to be consumed to allow pooiing of http connections.
+		// see https://stackoverflow.com/questions/27063667/httpclient-4-3-blocking-on-connection-pool
+		try {
+			r.readEntity(String.class);
+		} catch (Exception e) {
+			// catch exception. we only want to be sure that all content was cosumed
+		}
+	}
 }
