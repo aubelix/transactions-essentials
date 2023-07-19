@@ -11,6 +11,7 @@ package com.atomikos.remoting.twopc;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -51,6 +52,8 @@ public class ParticipantAdapter implements Participant {
 	public ParticipantAdapter(URI uri) {
 		if (client == null) {
 			ResteasyClientBuilder builder = new ResteasyClientBuilder();
+			builder.connectTimeout(2, TimeUnit.SECONDS);
+			builder.readTimeout(10, TimeUnit.SECONDS);
 			Client c = builder.connectionPoolSize(20).build(); 
 			c.property("jersey.config.client.suppressHttpComplianceValidation", true);
 			c.register(ParticipantsProvider.class);
