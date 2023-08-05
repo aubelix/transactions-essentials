@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.atomikos</groupId>
 		<artifactId>ate</artifactId>
-		<version>5.0.9.14</version>
+		<version>5.0.9.15</version>
 	</parent>
 	<artifactId>transactions-spring-boot-integration-tests</artifactId>
 	<name>Transactions Spring Boot Integration Tests</name>
@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-spring-boot-starter</artifactId>
-			<version>5.0.9.14</version>
+			<version>5.0.9.15</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
