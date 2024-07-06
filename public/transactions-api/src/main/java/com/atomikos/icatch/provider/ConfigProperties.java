@@ -35,6 +35,8 @@ public final class ConfigProperties {
 	public static final String DEFAULT_MAX_WAIT_TIME_ON_SHUTDOWN = "com.atomikos.icatch.default_max_wait_time_on_shutdown";
     public static final String THROW_ON_HEURISTIC = "com.atomikos.icatch.throw_on_heuristic";
     public static final String JVM_ID_PROPERTY_NAME = "com.atomikos.icatch.jvm_id";
+    public static final String REST_CLIENT_BUILDER = "com.atomikos.remoting.rest_client_builder";
+
 
 	
 	/**
@@ -264,6 +266,11 @@ public final class ConfigProperties {
 
     public String getJvmId() {
         return getProperty(JVM_ID_PROPERTY_NAME);
+
+    }
+    
+    public String getRestClientBuilder() {
+        return getProperty(REST_CLIENT_BUILDER);
 
     }
 

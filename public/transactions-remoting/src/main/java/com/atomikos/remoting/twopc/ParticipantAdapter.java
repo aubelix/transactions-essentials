@@ -53,31 +53,14 @@ public class ParticipantAdapter implements Participant {
 
 	public ParticipantAdapter(URI uri) {
 		if (client == null) {
-			ResteasyClientBuilder builder = new ResteasyClientBuilder();
-			
-			ConfigProperties configProperties = Configuration.getConfigProperties();
-			String connectionPoolSizeProperty = configProperties.getProperty("com.atomikos.remoting.twopc.ParticipantAdapter.connectionPoolSize");
-			int connectionPoolSize = 20;
-			if (connectionPoolSizeProperty != null)
-				connectionPoolSize = Integer.valueOf(connectionPoolSizeProperty);
-			
-			String connectTimeoutProperty = configProperties.getProperty("com.atomikos.remoting.twopc.ParticipantAdapter.connectTimeout");
-			int connectTimeout = 10;
-			if (connectTimeoutProperty != null)
-				connectTimeout = Integer.valueOf(connectTimeoutProperty);
-
-
-			String readTimeoutProperty = configProperties.getProperty("com.atomikos.remoting.twopc.ParticipantAdapter.readTimeout");
-			int readTimeout = 60;
-			if (readTimeoutProperty != null)
-				readTimeout = Integer.valueOf(readTimeoutProperty);
-
-			builder.connectTimeout(connectTimeout, TimeUnit.SECONDS);
-			builder.readTimeout(readTimeout, TimeUnit.SECONDS);
-			Client c = builder.connectionPoolSize(connectionPoolSize).build(); 
-			c.property("jersey.config.client.suppressHttpComplianceValidation", true);
-			c.register(ParticipantsProvider.class);
-			client = c;
+			String className = Configuration.getConfigProperties().getRestClientBuilder();
+			try {
+				Class<?> builderClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+				RestClientBuilder restClientBuilder = (RestClientBuilder)builderClass.newInstance();
+				client = restClientBuilder.build();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 		this.uri = uri;
 	}

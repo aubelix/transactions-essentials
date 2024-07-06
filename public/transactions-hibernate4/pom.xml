@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.atomikos</groupId>
         <artifactId>ate</artifactId>
-        <version>5.0.9.20</version>
+        <version>5.0.9.21</version>
     </parent>
     <properties>
 		<transform.skip>false</transform.skip>
@@ -15,13 +15,13 @@
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
-            <version>5.0.9.20</version>
+            <version>5.0.9.21</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jdbc</artifactId>
-            <version>5.0.9.20</version>
+            <version>5.0.9.21</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
