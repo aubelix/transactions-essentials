@@ -4,10 +4,13 @@
 	<parent>
 		<groupId>com.atomikos</groupId>
 		<artifactId>ate</artifactId>
-		<version>5.0.9.15</version>
+		<version>5.0.9.20</version>
 	</parent>
 	<artifactId>transactions-osgi</artifactId>
 	<name>Transactions OSGi</name>
+		<properties>
+		<transform.skip>false</transform.skip>
+	</properties>
 	<build>
 		<plugins>
 
@@ -86,13 +89,13 @@
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jdbc</artifactId>
-			<version>5.0.9.15</version>
+			<version>5.0.9.20</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jms</artifactId>
-			<version>5.0.9.15</version>
+			<version>5.0.9.20</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.atomikos</groupId>
 	<artifactId>atomikos-parent</artifactId>
-	<version>5.0.9.15</version>
+	<version>5.0.9.20</version>
 	<!-- With maven, a parent pom MUST have "pom" for packaging -->
 	<packaging>pom</packaging>
 	<name>Atomikos All POM</name>
@@ -128,9 +128,45 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.4.1</version>
 				</plugin>
+				<plugin>
+					<groupId>org.eclipse.transformer</groupId>
+					<artifactId>transformer-maven-plugin</artifactId>
+					<version>0.5.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			
+			
+			<plugin>
+				<!-- see https://github.com/eclipse/transformer for details -->
+				<groupId>org.eclipse.transformer</groupId>
+				<artifactId>transformer-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<classifier>jakarta</classifier>
+					<rules>
+						<jakartaDefaults>true</jakartaDefaults>
+					</rules>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<artifact>
+								<groupId>${project.groupId}</groupId>
+								<artifactId>${project.artifactId}</artifactId>
+							</artifact>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			
+			
 			<plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
 				<artifactId>maven-clover2-plugin</artifactId>
@@ -316,14 +352,14 @@
 				<module>public</module>
 			</modules>
 
-  <distributionManagement>
+	  <distributionManagement>
     <snapshotRepository>
       <id>snapshots</id>
       <url>http://maven-serv1.innovas.de:8081/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>internal</id>
-      <url>http://maven-serv1.innovas.de:8081/nexus/content/repositories/releases/</url>
+      <url>https://msi-repo.nexinsure.org/repository/3rd-party/</url>
     </repository>
   </distributionManagement>
 

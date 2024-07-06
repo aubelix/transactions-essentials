@@ -3,19 +3,23 @@
 	<parent>
 		<groupId>com.atomikos</groupId>
 		<artifactId>ate</artifactId>
-		<version>5.0.9.15</version>
+		<version>5.0.9.20</version>
 	</parent>
 	<artifactId>transactions-remoting</artifactId>
+		<properties>
+		<transform.skip>false</transform.skip>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jta</artifactId>
-			<version>5.0.9.15</version>
+			<version>5.0.9.20</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions</artifactId>
-			<version>5.0.9.15</version>
+			<version>5.0.9.20</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -80,7 +84,7 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
-			<version>3.6.1.Final</version>
+			<version>6.2.8.Final</version>
 			<scope>provided</scope>
 		</dependency>
 

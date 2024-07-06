@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.jms.JMSContext;
 import javax.jms.XAConnection;
 import javax.jms.XAConnectionFactory;
 import javax.naming.NameNotFoundException;
@@ -694,5 +695,25 @@ Referenceable, Serializable, OrderedLifecycleComponent {
 			}
 		}
 
+	}
+	
+	@Override
+	public JMSContext createContext() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JMSContext createContext(String userName, String password) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JMSContext createContext(String userName, String password, int sessionMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JMSContext createContext(int sessionMode) {
+		throw new UnsupportedOperationException();
 	}
 }

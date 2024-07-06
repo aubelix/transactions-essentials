@@ -4,16 +4,19 @@
     <parent>
         <groupId>com.atomikos</groupId>
         <artifactId>ate</artifactId>
-        <version>5.0.9.15</version>
+        <version>5.0.9.20</version>
     </parent>
     <artifactId>transactions-jdbc</artifactId>
     <name>Transactions JDBC</name>
-
+	<properties>
+		<transform.skip>false</transform.skip>
+	</properties>
     <dependencies>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
-            <version>5.0.9.15</version>
+            <version>5.0.9.20</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

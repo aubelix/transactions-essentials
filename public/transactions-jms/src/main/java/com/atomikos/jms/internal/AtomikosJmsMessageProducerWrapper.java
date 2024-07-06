@@ -8,6 +8,7 @@
 
 package com.atomikos.jms.internal;
 
+import javax.jms.CompletionListener;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -202,5 +203,80 @@ class AtomikosJmsMessageProducerWrapper extends ConsumerProducerSupport implemen
     public String toString() {
         return "atomikosJmsMessageProducerWrapper for " + delegate;
     }
+
+	@Override
+	public void setDeliveryDelay(long deliveryDelay) throws JMSException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": setDeliveryDelay ( " + deliveryDelay + " )...");
+		}
+		delegate.setDeliveryDelay(deliveryDelay);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": setDeliveryDelay done.");
+		}
+	}
+
+	@Override
+	public long getDeliveryDelay() throws JMSException {
+		long ret = 0;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": getDeliveryDelay()...");
+		}
+		ret = delegate.getDeliveryDelay();
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": getDeliveryDelay() returning " + ret);
+		}
+		return ret;
+	}
+
+	@Override
+	public void send(Message message, CompletionListener completionListener) throws JMSException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": send ( message , completionListener )..." );
+		}
+		enlist();
+		delegate.send(message, completionListener);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": send done.");
+		}
+	}
+
+	@Override
+	public void send(Message message, int deliveryMode, int priority, long timeToLive,
+			CompletionListener completionListener) throws JMSException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": send ( message , deliveryMode , priority , timeToLive , completionListener)...");
+		}
+		enlist();
+		delegate.send(message, deliveryMode, priority, timeToLive, completionListener);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": send done.");
+		}
+	}
+
+	@Override
+	public void send(Destination destination, Message message, CompletionListener completionListener)
+			throws JMSException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": send ( destination , message , completionListener ");
+		}
+		enlist();
+		delegate.send(destination, message, completionListener);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": send done.");
+		}
+	}
+
+	@Override
+	public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive,
+			CompletionListener completionListener) throws JMSException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.logDebug(this + ": send ( destination , message , deliveryMode , priority , timeToLive , completionListener )...");
+		}
+		enlist();
+		delegate.send(destination, message, deliveryMode, priority, timeToLive, completionListener);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.logTrace(this + ": send done.");
+		}
+	}
 
 }

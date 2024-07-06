@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.atomikos</groupId>
 		<artifactId>atomikos-parent</artifactId>
-		<version>5.0.9.15</version>
+		<version>5.0.9.20</version>
 	</parent>
 	<artifactId>ate</artifactId>
 	<packaging>pom</packaging>
@@ -12,6 +12,7 @@
 
 	<properties>
 		<inceptionYear>2000-2022</inceptionYear>
+		<transform.skip>true</transform.skip>
 	</properties>
 
 	<modules>
@@ -21,17 +22,17 @@
 		<module>transactions-jta</module>
 		<module>transactions-jdbc</module>
 		<module>transactions-jms</module>
-		<module>transactions-osgi</module>
+		<!--module>transactions-osgi</module-->
 		<module>transactions-hibernate2</module>
 		<module>transactions-hibernate3</module>
 		<module>transactions-hibernate4</module>
-		<module>transactions-eclipselink</module>
-		<module>transactions-jndi-provider</module>
+		<!--module>transactions-eclipselink</module-->
+		<!--module>transactions-jndi-provider</module-->
 		<module>atomikos-transactions-essentials</module>
 		<module>transactions-remoting</module>
-		<module>transactions-spring-boot</module>
-		<module>transactions-spring-boot-starter</module>
-		<module>transactions-spring-boot-integration-tests</module>
+		<!--module>transactions-spring-boot</module-->
+		<!--module>transactions-spring-boot-starter</module-->
+		<!--module>transactions-spring-boot-integration-tests</module-->
 	</modules>
 
 
