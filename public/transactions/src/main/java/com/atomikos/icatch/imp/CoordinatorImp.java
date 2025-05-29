@@ -786,6 +786,11 @@ public class CoordinatorImp implements CompositeCoordinator, Participant,
     public String getRecoveryDomainName() {
         return recoveryDomainName;
     }
+    
+    @Override
+	public Object getLockInstance() {
+		return fsm_;
+	}
 
 
 }

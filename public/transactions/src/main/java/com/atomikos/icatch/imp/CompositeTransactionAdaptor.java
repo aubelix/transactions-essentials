@@ -77,5 +77,9 @@ public class CompositeTransactionAdaptor extends AbstractCompositeTransaction
 		return coordinatorId;
 	}
 
+	@Override
+	public Object getLockInstance() {
+		return this;
+	}
 
 }

@@ -197,7 +197,7 @@ public abstract class ConnectionPool<ConnectionType> implements XPooledConnectio
 		xpc.destroy(reap);
 	}
 
-	public synchronized void reapPool()
+	public  void reapPool()
 	{
 		long maxInUseTime = properties.getReapTimeout();
 		if ( connections == null || maxInUseTime <= 0 ) return;
@@ -208,16 +208,19 @@ public abstract class ConnectionPool<ConnectionType> implements XPooledConnectio
 		while ( it.hasNext() ) {
 			XPooledConnection<ConnectionType> xpc = it.next();
 			long lastTimeReleased = xpc.getLastTimeAcquired();
-			boolean inUse = !xpc.isAvailable();
 
 			long now = System.currentTimeMillis();
-			if ( inUse && ( ( now - maxInUseTime * 1000 ) > lastTimeReleased ) ) {
-				if ( LOGGER.isTraceEnabled() ) LOGGER.logTrace ( this + ": connection in use for more than " + maxInUseTime + "s, reaping it: " + xpc );
-				xpc.destroy(true);
-				it.remove();
+			if ( ( ( now - maxInUseTime * 1000 ) > lastTimeReleased ) ) {
+				boolean inUse = !xpc.isAvailable();
+
+				if (inUse) 
+					LOGGER.logError ( this + ": connection in use for more than " + maxInUseTime + "s " + xpc );
+//				xpc.destroy(true);
+				//it.remove();
 			}
 		}
 		logCurrentPoolSize();
+
 	}
 	
 	private synchronized void removeConnectionsThatExceededMaxLifetime()

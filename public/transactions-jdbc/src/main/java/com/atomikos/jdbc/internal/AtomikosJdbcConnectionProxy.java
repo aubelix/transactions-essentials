@@ -80,28 +80,50 @@ public class AtomikosJdbcConnectionProxy extends AbstractJdbcConnectionProxy {
 			if (LOGGER.isTraceEnabled()) {
 				LOGGER.logTrace(this + ": notifyBeforeUse " + sessionHandleState);
 			}
+			
+			
+			
+			
+			
+			
+			// in AtomikosRestPort.rollback there is first a lock to FSMImp and then to SessionHandleState
+			// this can lead to a deadlock - therefore we lock here in the same order
+			
+			
+			
+			
+			
 			CompositeTransaction ct = null;
 			CompositeTransactionManager ctm = getCompositeTransactionManager();
 			if (ctm != null) {
 				ct = ctm.getCompositeTransaction();
-				// first notify the session handle - see case 27857
-				sessionHandleState.notifyBeforeUse(ct);
-				if (ct != null && TransactionManagerImp.isJtaTransaction(ct)) {
-					ret = true;
-					if (LOGGER.isTraceEnabled()) {
-						LOGGER.logTrace(this + ": detected transaction " + ct);
-					}
-					if (ct.getState().equals(TxState.ACTIVE)) {
-						ct.registerSynchronization(new JdbcRequeueSynchronization(this, ct));
+				Object lock = null;
+				if (ct == null) // this happens if we have @Transactional(propagation = Propagation.NOT_SUPPORTED)
+					lock = new Object(); // just a dummy to keep the synchronized code simple
+				else
+					lock = ct.getCompositeCoordinator().getLockInstance();
+				synchronized (lock) {
+					
+					// first notify the session handle - see case 27857
+					sessionHandleState.notifyBeforeUse(ct);
+					if (ct != null && TransactionManagerImp.isJtaTransaction(ct)) {
+						ret = true;
+						if (LOGGER.isTraceEnabled()) {
+							LOGGER.logTrace(this + ": detected transaction " + ct);
+						}
+						if (ct.getState().equals(TxState.ACTIVE)) {
+							ct.registerSynchronization(new JdbcRequeueSynchronization(this, ct));
+						} else {
+							AtomikosSQLException.throwAtomikosSQLException(
+									"The transaction has timed out - try increasing the timeout if needed");
+						}
 					} else {
-						AtomikosSQLException.throwAtomikosSQLException(
-								"The transaction has timed out - try increasing the timeout if needed");
+					    if (!localTransactionMode) {
+					        AtomikosSQLException.throwAtomikosSQLException("A JTA transaction is required but none was found - please start one first (or set localTransactionMode=true to allow JDBC transactions)");
+					    }
 					}
-				} else {
-				    if (!localTransactionMode) {
-				        AtomikosSQLException.throwAtomikosSQLException("A JTA transaction is required but none was found - please start one first (or set localTransactionMode=true to allow JDBC transactions)");
-				    }
 				}
+
 			}
 
 		} catch (InvalidSessionHandleStateException ex) {

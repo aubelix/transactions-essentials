@@ -36,6 +36,8 @@ public interface CompositeCoordinator
      */
 
      RecoveryCoordinator getRecoveryCoordinator();
+     
+     Object getLockInstance();
 
 }
 
