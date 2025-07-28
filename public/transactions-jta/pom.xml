@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.atomikos</groupId>
         <artifactId>ate</artifactId>
-        <version>5.0.9.21</version>
+        <version>5.0.9.26</version>
     </parent>
     <artifactId>transactions-jta</artifactId>
     <name>Transactions JTA</name>
@@ -15,18 +15,18 @@
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
-            <version>5.0.9.21</version>
+            <version>5.0.9.26</version>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
-            <version>5.0.9.21</version>
+            <version>5.0.9.26</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
-            <version>5.0.9.21</version>
+            <version>5.0.9.26</version>
         </dependency>
 		<dependency>
   			<groupId>jakarta.jms</groupId>

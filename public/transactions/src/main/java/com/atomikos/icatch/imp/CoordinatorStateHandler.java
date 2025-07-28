@@ -573,6 +573,18 @@ abstract class CoordinatorStateHandler
     HeurMixedException, SysException, HeurHazardException,
     java.lang.IllegalStateException {
 		try {
+	        /* 
+			 * Wenn der Thread einen Interrupt erhält, während das doRollback()
+			 * läuft, fliegt aus dem doRollback() die folgende Exception. Die
+			 * eigentliche Root-Cause ist eine
+			 * java.nio.channels.ClosedByInterruptException
+			 * (com.atomikos.recovery.fs.FileSystemRepository.writeCheckpoint->sun.nio.ch.FileChannelImpl.force->java.nio.channels.spi.AbstractInterruptibleChannel.end)
+			 *
+			 * com.atomikos.icatch.SysException: Error in rollback: could not
+			 * flush state image java.nio.channels.ClosedByInterruptException
+			 * com.atomikos.recovery.LogWriteException
+			 */
+			  
         	cb.doRollback();
         	coordinator_.notifySynchronizationsAfterCompletion(TxState.ABORTING, TxState.TERMINATED);
     	} catch (HeurCommitException hc) {
@@ -584,7 +596,18 @@ abstract class CoordinatorStateHandler
     	} catch (HeurHazardException hh) {
     		coordinator_.notifySynchronizationsAfterCompletion(TxState.ABORTING,TxState.TERMINATED);
     		throw hh;
-    	}
+    	} catch (RuntimeException rtx) {
+    		LOGGER.logError("rollback/notify failed with " + rtx + ". Trying to abort/terminate...", rtx);
+			coordinator_.notifySynchronizationsAfterCompletion(TxState.ABORTING,TxState.TERMINATED);
+			LOGGER.logError("rollback/notify failed with " + rtx + ". Abort/terminate DONE. Rethrowing now!", rtx);
+			throw rtx;
+		} catch (Throwable t) {
+			LOGGER.logError("rollback/notify failed with " + t + ". Trying to abort/terminate...", t);
+			coordinator_.notifySynchronizationsAfterCompletion(TxState.ABORTING,TxState.TERMINATED);
+			RuntimeException rtx = new RuntimeException("CoordinatorStateHandler::notifySynchronizationsAfterCompletion: Oops : " + t, t);
+			LOGGER.logError("rollback/notify failed with " + t + ". Abort/terminate DONE. Rethrowing now " + rtx, rtx);
+			throw rtx;
+		}
 	}
     
     void commitWithAfterCompletionNotification(CommitCallback cb) throws HeurRollbackException, HeurMixedException,

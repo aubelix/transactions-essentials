@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.atomikos</groupId>
 	<artifactId>atomikos-parent</artifactId>
-	<version>5.0.9.21</version>
+	<version>5.0.9.26</version>
 	<!-- With maven, a parent pom MUST have "pom" for packaging -->
 	<packaging>pom</packaging>
 	<name>Atomikos All POM</name>
@@ -131,7 +131,7 @@
 				<plugin>
 					<groupId>org.eclipse.transformer</groupId>
 					<artifactId>transformer-maven-plugin</artifactId>
-					<version>0.5.0</version>
+					<version>1.0.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
