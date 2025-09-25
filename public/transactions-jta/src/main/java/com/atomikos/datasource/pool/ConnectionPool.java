@@ -219,6 +219,7 @@ public abstract class ConnectionPool<ConnectionType> implements XPooledConnectio
 				//it.remove();
 			}
 		}
+		LOGGER.logError( this +  ": current size: " + availableSize() + "/" + totalSize());
 		logCurrentPoolSize();
 
 	}
